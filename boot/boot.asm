@@ -7,11 +7,6 @@ SectorNumOfRootDirStart equ 19
 SectorNumOfFAT1Start equ 1
 SectorBalance equ 17
 
-;==tmp var
-RootDirSizeForLoop dw RootDirSectors
-SectorNo dw 0
-odd db 0
-
 jmp short Label_Start
 nop
 BS_OEMName db 'MINEboot'
@@ -70,7 +65,7 @@ int 10h
 xor ah, ah
 xor dl, dl
 int 13h
-jmp Label_No_LoaderBin
+; jmp $
 
 ;========= search loader.bin
 mov word [SectorNo], SectorNumOfRootDirStart
@@ -126,43 +121,6 @@ Label_No_LoaderBin:
     mov bp, NoLoaderMessage
     int 10h
     jmp $
-
-;======== get FAT Entry
-Func_GetFATEntry:
-    push es
-    push bx
-    push ax
-    mov ax, 00
-    mov es, ax
-    pop ax
-    mov byte [odd], 0
-    mov bx, 3
-    mul bx
-    mov bx, 2
-    div dx
-    cmp dx, 0
-    jz Label_Even
-    mov byte [odd], 1
-Label_Even:
-    xor dx, dx
-    mov bx, [BPB_BytesPerSec]
-    div bx
-    push dx
-    mov bx, 8000h
-    add ax, SectorNumOfFAT1Start
-    mov cl, 2
-    call Func_ReadOneSector
-    pop dx
-    add bx, dx
-    mov ax, [es:bx]
-    cmp byte [odd], 1
-    jnz Label_Even_2
-    shr ax, 4
-Label_Even_2:
-    and ax, 0fffh
-    pop bx
-    pop es
-    ret
 
 ;==found loader.bin
 Label_FileName_Found:
@@ -227,7 +185,48 @@ Label_Go_On_Reading:
         pop bp 
         ret
 
+;======== get FAT Entry
+Func_GetFATEntry:
+    push es
+    push bx
+    push ax
+    mov ax, 00
+    mov es, ax
+    pop ax
+    mov byte [odd], 0
+    mov bx, 3
+    mul bx
+    mov bx, 2
+    div dx
+    cmp dx, 0
+    jz Label_Even
+    mov byte [odd], 1
+Label_Even:
+    xor dx, dx
+    mov bx, [BPB_BytesPerSec]
+    div bx
+    push dx
+    mov bx, 8000h
+    add ax, SectorNumOfFAT1Start
+    mov cl, 2
+    call Func_ReadOneSector
+    pop dx
+    add bx, dx
+    mov ax, [es:bx]
+    cmp byte [odd], 1
+    jnz Label_Even_2
+    shr ax, 4
+Label_Even_2:
+    and ax, 0fffh
+    pop bx
+    pop es
+    ret
 
+
+;==tmp var
+RootDirSizeForLoop dw RootDirSectors
+SectorNo dw 0
+odd db 0
 
 StartBootMessage: db "Start Boot"
 NoLoaderMessage: db "EROOR:NO LOADER FOUND"
