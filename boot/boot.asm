@@ -148,7 +148,7 @@ Label_Go_On_Loading_File:
     call Func_ReadOneSector
     pop ax
     CALL Func_GetFATEntry
-    cmp AX, 0fffh
+    cmp ax, 0fffh
     jz Label_File_Loaded
     push ax
     mov dx, RootDirSectors
@@ -223,6 +223,8 @@ Label_Even_2:
     ret
 
 
+
+
 ;==tmp var
 RootDirSizeForLoop dw RootDirSectors
 SectorNo dw 0
@@ -230,7 +232,8 @@ odd db 0
 
 StartBootMessage: db "Start Boot"
 NoLoaderMessage: db "EROOR:NO LOADER FOUND"
-LoaderFileName: db "LOADER BIN", 0
+LoaderFoundMessage: db "F!"
+LoaderFileName: db "LOADER  BIN", 0
 
 Label_File_Loaded:
     jmp BaseOfLoader:OffsetOfLoader

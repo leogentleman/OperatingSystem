@@ -1,4 +1,4 @@
-org 1000h
+org 10000h
 mov ax, cs
 mov ds, ax
 mov es, ax
