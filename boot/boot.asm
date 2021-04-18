@@ -70,7 +70,7 @@ int 10h
 xor ah, ah
 xor dl, dl
 int 13h
-jmp $
+jmp Label_No_LoaderBin
 
 ;========= search loader.bin
 mov word [SectorNo], SectorNumOfRootDirStart
@@ -120,7 +120,7 @@ Label_No_LoaderBin:
     mov dx, 0100h
     mov cx, 21
     push ax
-    mov cx, ds
+    mov ax, ds
     mov es, ax
     pop ax
     mov bp, NoLoaderMessage
