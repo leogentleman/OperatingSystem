@@ -1,10 +1,37 @@
+/***************************************************
+*		版权声明
+*
+*	本操作系统名为：MINE
+*	该操作系统未经授权不得以盈利或非盈利为目的进行开发，
+*	只允许个人学习以及公开交流使用
+*
+*	代码最终所有权及解释权归田宇所有；
+*
+*	本模块作者：	田宇
+*	EMail:		345538255@qq.com
+*
+*
+***************************************************/
 
+#include "lib.h"
+#include "printk.h"
 
 void Start_Kernel(void)
 {
 	int *addr = (int *)0xffff800000a00000;
 	int i;
 
+	Pos.XResolution = 1440;
+	Pos.YResolution = 900;
+
+	Pos.XPosition = 0;
+	Pos.YPosition = 0;
+
+	Pos.XCharSize = 8;
+	Pos.YCharSize = 16;
+
+	Pos.FB_addr = (int *)0xffff800000a00000;
+	Pos.FB_length = (Pos.XResolution * Pos.YResolution * 4);
 
 	for(i = 0 ;i<1440*20;i++)
 	{
@@ -38,6 +65,9 @@ void Start_Kernel(void)
 		*((char *)addr+3)=(char)0x00;	
 		addr +=1;	
 	}
+
+	color_printk(YELLOW,BLACK,"Look!I can print something!!!!!hahahahahaahh\n");
+
 	while(1)
 		;
 }
